@@ -95,10 +95,17 @@
     <div class="container mx-auto p-2 sm:p-4">
         <!-- Header Section -->
         <header class="bg-white p-4 rounded-xl shadow-md mb-6 border border-gray-200">
-            <h1 id="main-title" class="text-2xl md:text-3xl font-bold text-blue-700 text-center md:text-left">របាយការណ៍វត្តមានបុគ្គលិក</h1>
+            <div class="flex justify-between items-center mb-4">
+                 <h1 id="main-title" class="text-2xl md:text-3xl font-bold text-blue-700">របាយការណ៍វត្តមានបុគ្គលិក</h1>
+                 <a href="https://script.google.com/macros/s/AKfycbwpxs3CAM4nYJD1mpwg8i_2h2vhz9OD4nNP2K29Hr_IjkLiaHTiuoj0-PlY3sugB_sz1Q/exec" target="_blank" title="ត្រឡប់ទៅប្រព័ន្ធគ្រប់គ្រងច្បាប់និស្សិត" class="p-2.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-all shadow-sm active:scale-95 flex justify-center">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                       <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                     </svg>
+                 </a>
+            </div>
             
             <!-- Filter Menu -->
-            <div id="filter-box" class="mt-4 p-3 bg-gray-50 rounded-lg border">
+            <div id="filter-box" class="p-3 bg-gray-50 rounded-lg border">
                 <div class="flex flex-col sm:flex-row sm:items-end gap-3">
                     <!-- Month & Year Filter -->
                     <div class="flex-1">
@@ -120,8 +127,8 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" /></svg>
                         </button>
                          <button id="reset-btn" title="បច្ចុប្បន្ន" class="w-full sm:w-auto p-2.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5m15 11v-5h-5m0 0l-1.5-1.5a9 9 0 10-12.728 0" /></svg>
-                         </button>
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5m15 11v-5h-5m0 0l-1.5-1.5a9 9 0 10-12.728 0" /></svg>
+                           </button>
                         <button id="export-btn" title="ទាញយក Excel" class="w-full sm:w-auto p-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm3.5 1.5a.5.5 0 00-1 0v3a.5.5 0 001 0v-3zM6.5 8a.5.5 0 000-1h3a.5.5 0 000 1h-3zM5 11.5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5zm1.5 2.5a.5.5 0 00-1 0v3a.5.5 0 001 0v-3zm2-3a.5.5 0 000-1h3a.5.5 0 000 1h-3z" /></svg>
                         </button>
@@ -151,6 +158,7 @@
                             <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ម៉ោងចូល</th>
                             <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ម៉ោងចេញ</th>
                             <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ផ្សេងៗ</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">កាលវិភាគ</th>
                         </tr>
                     </thead>
                     <tbody id="table-body" class="bg-white divide-y divide-gray-200">
@@ -459,7 +467,19 @@
                 return table.rows.map(row => {
                     if (!row.c || row.c.every(cell => !cell || cell.v === null)) return null;
                     const id = getDisplayValue(row.c[6]); // G
-                    return { id, name: getDisplayValue(row.c[4]), gender: getDisplayValue(row.c[5]), department: getDisplayValue(row.c[3]), date: parseDate(getDisplayValue(row.c[7])), checkIn: getDisplayValue(row.c[9]), checkOut: getDisplayValue(row.c[10]), other: getDisplayValue(row.c[12], ''), photo: employeePhotos.get(id) || null };
+                    return { 
+                        id, 
+                        name: getDisplayValue(row.c[4]), // E
+                        gender: getDisplayValue(row.c[5]), // F
+                        department: getDisplayValue(row.c[3]), // D -> ផ្នែក
+                        class: getDisplayValue(row.c[2]), // C -> ថ្នាក់
+                        date: parseDate(getDisplayValue(row.c[7])), // H
+                        schedule: getDisplayValue(row.c[8]), // I -> កាលវិភាគ
+                        checkIn: getDisplayValue(row.c[9]), // J
+                        checkOut: getDisplayValue(row.c[10]), // K
+                        other: getDisplayValue(row.c[12], ''), // M
+                        photo: employeePhotos.get(id) || null 
+                    };
                 }).filter(record => record && record.date);
             };
             
@@ -518,7 +538,7 @@
                         return recordDate && recordDate.getMonth() === month && recordDate.getFullYear() === year;
                     });
                      const [yearText, monthText] = selectedMonthYear.split('-').map(Number);
-                     updateSummary(filteredRecords.length, monthText, yearText);
+                      updateSummary(filteredRecords.length, monthText, yearText);
                 } else {
                     filteredRecords = allRecords.filter(record => {
                         return record.date && toISODateString(record.date) === selectedDate;
@@ -566,6 +586,7 @@
                                 <td class="${cellClasses} text-gray-700">${record.checkIn}</td>
                                 <td class="${cellClasses} text-gray-700">${record.checkOut}</td>
                                 <td class="${cellClasses} text-gray-700">${record.other}</td>
+                                <td class="${cellClasses} text-gray-700">${record.schedule}</td>
                             </tr>`;
                     } else {
                         const cellClasses = "px-4 py-3 whitespace-nowrap text-sm align-middle";
@@ -579,6 +600,7 @@
                                 <td class="${cellClasses} text-gray-700">${record.checkIn}</td>
                                 <td class="${cellClasses} text-gray-700">${record.checkOut}</td>
                                 <td class="${cellClasses} text-gray-700">${record.other}</td>
+                                <td class="${cellClasses} text-gray-700">${record.schedule}</td>
                             </tr>`;
                     }
                 }).join('');
@@ -709,26 +731,30 @@
                 const recordsForDate = allRecords.filter(rec => rec.date && toISODateString(rec.date) === dateStr);
                 
                 if (recordsForDate.length === 0) return;
+                
+                const toKhmerNumeral = (num) => {
+                    const khmerNums = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+                    return String(num).split('').map(digit => khmerNums[parseInt(digit, 10)]).join('');
+                };
 
                 const exportData = recordsForDate.map(rec => ({
-                    'អត្តលេខ': rec.id,
                     'ឈ្មោះ': rec.name,
                     'ភេទ': rec.gender,
-                    'ផ្នែក': rec.department,
+                    'ថ្នាក់': rec.class,
                     'ម៉ោងចូល': rec.checkIn,
                     'ម៉ោងចេញ': rec.checkOut,
-                    'ផ្សេងៗ': rec.other
+                    'កាលវិភាគ': rec.schedule
                 }));
 
                 const worksheet = XLSX.utils.json_to_sheet(exportData);
                 const workbook = XLSX.utils.book_new();
                 
                 const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-                const day = dateToExport.getDate();
+                const day = toKhmerNumeral(dateToExport.getDate());
                 const month = khmerMonths[dateToExport.getMonth()];
-                const year = dateToExport.getFullYear();
+                const year = toKhmerNumeral(dateToExport.getFullYear());
                 const sheetName = `${day} ${month} ${year}`;
-                const fileName = `Attendance_Report_${day}-${month}-${year}.xlsx`;
+                const fileName = `DI_Report-${day}-${month}-${year}.xlsx`;
 
                 XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
                 XLSX.writeFile(workbook, fileName);
@@ -857,6 +883,5 @@
     </script>
 </body>
 </html>
-
 
 
