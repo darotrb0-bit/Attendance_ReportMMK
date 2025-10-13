@@ -98,9 +98,9 @@
             <div class="flex justify-between items-center mb-4">
                  <h1 id="main-title" class="text-2xl md:text-3xl font-bold text-blue-700">របាយការណ៍វត្តមានបុគ្គលិក</h1>
                  <a href="https://script.google.com/macros/s/AKfycbwpxs3CAM4nYJD1mpwg8i_2h2vhz9OD4nNP2K29Hr_IjkLiaHTiuoj0-PlY3sugB_sz1Q/exec" target="_blank" title="ត្រឡប់ទៅប្រព័ន្ធគ្រប់គ្រងច្បាប់និស្សិត" class="p-2.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-all shadow-sm active:scale-95 flex justify-center">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                       <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
-                     </svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                      </svg>
                  </a>
             </div>
             
@@ -324,26 +324,6 @@
 
             const isValidRecord = (rec) => rec.checkIn && rec.checkIn !== 'N/A' && rec.checkIn !== '' && rec.checkOut && rec.checkOut !== 'N/A' && rec.checkOut !== '';
 
-            const filterIncompleteDates = (records) => {
-                const recordsByDate = new Map();
-                records.forEach(rec => {
-                    if (!rec.date) return;
-                    const dateStr = toISODateString(rec.date);
-                    if (!recordsByDate.has(dateStr)) {
-                        recordsByDate.set(dateStr, []);
-                    }
-                    recordsByDate.get(dateStr).push(rec);
-                });
-
-                const validDates = new Set();
-                for (const [dateStr, dateRecords] of recordsByDate.entries()) {
-                    if (dateRecords.every(isValidRecord)) {
-                        validDates.add(dateStr);
-                    }
-                }
-                return records.filter(rec => rec.date && validDates.has(toISODateString(rec.date)));
-            };
-            
             const fetchData = async () => {
                 showLoader(true);
                 try {
@@ -370,7 +350,9 @@
                     priorityNames = parsePriorityData(priorityData.table);
                     
                     let parsedRecords = parseSheetData(attendanceData.table);
-                    allRecords = filterIncompleteDates(parsedRecords); // Apply the strict filter
+                    // IMPROVEMENT: Filter only individual invalid records, not entire days.
+                    // This provides a more accurate view if some data is missing.
+                    allRecords = parsedRecords.filter(isValidRecord);
                     
                     populateFilters();
 
@@ -438,6 +420,7 @@
             
             const getDisplayValue = (cell, defaultValue = 'N/A') => {
                 if (!cell) return defaultValue;
+                // Prefer the formatted value 'f', but fall back to the raw value 'v'
                 const value = (cell.f !== null && cell.f !== undefined) ? cell.f : cell.v;
                 return (value === null || value === undefined) ? defaultValue : value.toString();
             };
@@ -483,15 +466,35 @@
                 }).filter(record => record && record.date);
             };
             
-             const parseDate = (dateString) => {
+            const parseDate = (dateString) => {
                  if (!dateString || typeof dateString !== 'string' || dateString === 'N/A') return null;
+
+                 // IMPROVEMENT: Handle Google Sheets' native JSON date format "Date(YYYY,M,D)"
+                 // This is more reliable than parsing formatted strings.
+                 const gSheetDateMatch = dateString.match(/Date\((\d{4}),(\d{1,2}),(\d{1,2})\)/);
+                 if (gSheetDateMatch) {
+                     // The month from Google Sheets (index 2) is 0-indexed (0=Jan, 1=Feb, etc.)
+                     const year = parseInt(gSheetDateMatch[1], 10);
+                     const month = parseInt(gSheetDateMatch[2], 10);
+                     const day = parseInt(gSheetDateMatch[3], 10);
+                     return new Date(year, month, day);
+                 }
+                 
+                 // Fallback for manually entered date strings like '13-Oct-2025'
                  const monthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
                  let parts = dateString.split('-');
-                 if (parts.length === 3 && monthMap.hasOwnProperty(parts[1])) return new Date(parts[2], monthMap[parts[1]], parts[0]);
+                 if (parts.length === 3 && monthMap.hasOwnProperty(parts[1])) {
+                     return new Date(parts[2], monthMap[parts[1]], parts[0]);
+                 }
+
+                 // Fallback for 'DD/MM/YYYY'
                  parts = dateString.split('/');
-                 if (parts.length === 3) return new Date(parts[2], parts[1] - 1, parts[0]);
-                 return null;
-             };
+                 if (parts.length === 3) {
+                     return new Date(parts[2], parts[1] - 1, parts[0]);
+                 }
+                 
+                 return null; // Return null if no format matches
+            };
 
             const groupAndSortRecords = (records) => {
                 const grouped = new Map();
@@ -537,8 +540,8 @@
                         const recordDate = record.date;
                         return recordDate && recordDate.getMonth() === month && recordDate.getFullYear() === year;
                     });
-                     const [yearText, monthText] = selectedMonthYear.split('-').map(Number);
-                      updateSummary(filteredRecords.length, monthText, yearText);
+                      const [yearText, monthText] = selectedMonthYear.split('-').map(Number);
+                       updateSummary(filteredRecords.length, monthText, yearText);
                 } else {
                     filteredRecords = allRecords.filter(record => {
                         return record.date && toISODateString(record.date) === selectedDate;
@@ -763,7 +766,6 @@
             
             const hideExportOptions = () => exportModal.classList.remove('active');
 
-            // --- UPDATED FUNCTION: Download Modal as PDF (Handles scrolling content and absolute positioning) ---
             const downloadDetailsAsPdf = async () => {
                 const { jsPDF } = window.jspdf;
                 const modalContent = detailsModal.querySelector('.modal-content');
@@ -777,7 +779,6 @@
 
                 if (!modalContent || !scrollableContent || !photoContainer || !modalHeader) return;
 
-                // --- Store original styles to revert back later ---
                 const originalStyles = {
                     modal: { maxHeight: modalContent.style.maxHeight },
                     scroll: { overflowY: scrollableContent.style.overflowY },
@@ -801,7 +802,6 @@
                     modalContent.style.maxHeight = 'none';
                     scrollableContent.style.overflowY = 'visible';
 
-                    // Give the browser a moment to apply style changes and reflow
                     await new Promise(resolve => setTimeout(resolve, 100));
 
                     // --- Capture and Generate PDF ---
@@ -883,5 +883,3 @@
     </script>
 </body>
 </html>
-
-
