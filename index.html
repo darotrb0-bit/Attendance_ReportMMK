@@ -1,885 +1,885 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>របាយការណ៍វត្តមានបុគ្គលិក</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Koulen&family=Noto+Sans+Khmer:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Noto Sans Khmer', sans-serif;
-        }
-        h1, h2, h3, th {
-            font-family: 'Koulen', cursive;
-        }
-        /* Custom scrollbar for better look */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        #loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Modal Styles with Animation */
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            transform: translateY(-20px) scale(0.95);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .modal.active .modal-content {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>របាយការណ៍វត្តមានបុគ្គលិក</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Koulen&family=Noto+Sans+Khmer:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Khmer', sans-serif;
+        }
+        h1, h2, h3, th {
+            font-family: 'Koulen', cursive;
+        }
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        #loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Modal Styles with Animation */
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal.active .modal-content {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
 
-        /* Auto-hide Filter Box on Mobile */
-        @media (max-width: 639px) { /* Tailwind 'sm' breakpoint */
-            #main-title {
-                cursor: pointer;
-            }
-            #filter-box {
-                transition: all 0.5s ease-in-out;
-                max-height: 500px; /* A large enough value to show content */
-                overflow: hidden;
-            }
-            #filter-box.hidden-mobile {
-                max-height: 0;
-                padding-top: 0;
-                padding-bottom: 0;
-                margin-top: 0;
-                border-width: 0;
-                opacity: 0;
-            }
-        }
-        /* Card Animation for Pagination */
-        @keyframes slideInFromRight {
-            from { transform: translateX(50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideInFromLeft {
-            from { transform: translateX(-50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .slide-in-right { animation: slideInFromRight 0.35s ease-out forwards; }
-        .slide-in-left { animation: slideInFromLeft 0.35s ease-out forwards; }
-    </style>
+        /* Auto-hide Filter Box on Mobile */
+        @media (max-width: 639px) { /* Tailwind 'sm' breakpoint */
+            #main-title {
+                cursor: pointer;
+            }
+            #filter-box {
+                transition: all 0.5s ease-in-out;
+                max-height: 500px; /* A large enough value to show content */
+                overflow: hidden;
+            }
+            #filter-box.hidden-mobile {
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                margin-top: 0;
+                border-width: 0;
+                opacity: 0;
+            }
+        }
+        /* Card Animation for Pagination */
+        @keyframes slideInFromRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideInFromLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .slide-in-right { animation: slideInFromRight 0.35s ease-out forwards; }
+        .slide-in-left { animation: slideInFromLeft 0.35s ease-out forwards; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div class="container mx-auto p-2 sm:p-4">
-        <!-- Header Section -->
-        <header class="bg-white p-4 rounded-xl shadow-md mb-6 border border-gray-200">
-            <div class="flex justify-between items-center mb-4">
-                 <h1 id="main-title" class="text-2xl md:text-3xl font-bold text-blue-700">របាយការណ៍វត្តមានបុគ្គលិក</h1>
-                 <a href="https://script.google.com/macros/s/AKfycbwpxs3CAM4nYJD1mpwg8i_2h2vhz9OD4nNP2K29Hr_IjkLiaHTiuoj0-PlY3sugB_sz1Q/exec" target="_blank" title="ត្រឡប់ទៅប្រព័ន្ធគ្រប់គ្រងច្បាប់និស្សិត" class="p-2.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-all shadow-sm active:scale-95 flex justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
-                      </svg>
-                 </a>
-            </div>
-            
-            <!-- Filter Menu -->
-            <div id="filter-box" class="p-3 bg-gray-50 rounded-lg border">
-                <div class="flex flex-col sm:flex-row sm:items-end gap-3">
-                    <!-- Month & Year Filter -->
-                    <div class="flex-1">
-                        <label for="month-year-filter" class="block text-sm font-medium text-gray-600 mb-1">ខែ និង ឆ្នាំ</label>
-                        <select id="month-year-filter" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition">
-                        </select>
-                    </div>
-
-                    <!-- Date Filter (Now hidden on mobile) -->
-                    <div class="flex-1 hidden md:block">
-                        <label for="date-filter" class="block text-sm font-medium text-gray-600 mb-1">កាលបរិច្ឆេទ</label>
-                        <select id="date-filter" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition">
-                        </select>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex items-center gap-2">
-                        <button id="filter-btn" title="បង្ហាញ" class="w-full sm:w-auto p-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" /></svg>
-                        </button>
-                         <button id="reset-btn" title="បច្ចុប្បន្ន" class="w-full sm:w-auto p-2.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5m15 11v-5h-5m0 0l-1.5-1.5a9 9 0 10-12.728 0" /></svg>
-                           </button>
-                        <button id="export-btn" title="ទាញយក Excel" class="w-full sm:w-auto p-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm3.5 1.5a.5.5 0 00-1 0v3a.5.5 0 001 0v-3zM6.5 8a.5.5 0 000-1h3a.5.5 0 000 1h-3zM5 11.5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5zm1.5 2.5a.5.5 0 00-1 0v3a.5.5 0 001 0v-3zm2-3a.5.5 0 000-1h3a.5.5 0 000 1h-3z" /></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-             <div id="summary" class="mt-4 text-sm text-gray-600 font-medium"></div>
-        </header>
-
-        <!-- Main Content Area -->
-        <main id="report-container">
-            <!-- Loading Spinner -->
-            <div id="loader-container" class="flex justify-center items-center p-10">
-                <div id="loader"></div>
-            </div>
-
-            <!-- Table for Desktop -->
-            <div class="hidden md:block overflow-x-auto bg-white rounded-xl shadow-md border border-gray-200">
-                <table class="min-w-full">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">អត្តលេខ</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ឈ្មោះបុគ្គលិក</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ភេទ</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ផ្នែក</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">កាលបរិច្ឆេទ</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ម៉ោងចូល</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ម៉ោងចេញ</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ផ្សេងៗ</th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">កាលវិភាគ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body" class="bg-white divide-y divide-gray-200">
-                        <!-- Data rows will be injected here -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Mobile View Container -->
-            <div id="mobile-view-container" class="md:hidden">
-                <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-                <div id="pagination-controls" class="flex items-center justify-center gap-4 mt-6">
-                    <button id="prev-page-btn" class="p-2.5 bg-white rounded-full shadow-md border hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-90"><svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                    <span id="page-indicator" class="text-sm font-semibold text-gray-700 w-24 text-center"></span>
-                    <button id="next-page-btn" class="p-2.5 bg-white rounded-full shadow-md border hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-90"><svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
-                </div>
-            </div>
-
-            <!-- No Data Message -->
-            <div id="no-data" class="hidden text-center p-10 bg-white rounded-xl shadow-md">
-                <p class="text-gray-500 font-semibold">គ្មានទិន្នន័យសម្រាប់បង្ហាញ</p>
-            </div>
-        </main>
-    </div>
-
-    <!-- Details Modal -->
-    <div id="details-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col relative">
-            <div id="modal-photo-container" class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-            
-            <!-- Action Buttons Container -->
-            <div id="modal-action-buttons" class="absolute top-2 right-2 flex gap-1 z-10">
-                <button id="download-details-btn" title="ទាញយក PDF" class="text-gray-400 hover:text-blue-600 hover:bg-gray-200 rounded-full p-2 transition-colors">
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                </button>
-                <button id="close-details-modal-btn" class="text-gray-400 hover:text-gray-800 hover:bg-gray-200 rounded-full p-2 transition-colors">
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-            </div>
-
-            <div class="pt-12 p-4 border-b text-center bg-gray-50 rounded-t-2xl"><h2 class="text-xl font-bold text-blue-700" id="modal-employee-name"></h2><p class="text-sm text-gray-500" id="modal-employee-id"></p></div>
-            <div id="modal-scroll-content" class="p-4 overflow-y-auto"><h3 class="font-bold text-lg mb-3 text-gray-800">កំណត់ត្រាវត្តមានប្រចាំខែ <span id="modal-month-year" class="text-blue-600"></span></h3><div id="modal-attendance-list" class="space-y-3"></div></div>
-            <div id="modal-summary" class="p-4 bg-gray-100 border-t rounded-b-2xl mt-auto"></div>
-        </div>
-    </div>
-    
-    <!-- Export Modal -->
-    <div id="export-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
-            <div class="p-4 border-b flex justify-between items-center"><h2 class="text-xl font-bold text-gray-800">ទាញយករបាយការណ៍ Excel</h2><button id="close-export-modal-btn" class="text-gray-400 hover:text-gray-800 hover:bg-gray-200 rounded-full p-2 transition-colors"><svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
-            <div class="p-4 overflow-y-auto"><p class="text-sm text-gray-600 mb-3">សូមជ្រើសរើសកាលបរិច្ឆេទសម្រាប់ទាញយក៖</p><div id="export-date-list" class="space-y-2"></div></div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- CONFIGURATION ---
-            const SHEET_ID = '14eA00GXamqLkhuLAzVYPOBKads7XUZ5mfVRyqSGQwfk';
-            const SHEET_NAME = 'Data';
-            const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-            
-            const PHOTO_SHEET_ID = '1_Kgl8UQXRsVATt_BOHYQjVWYKkRIBA12R-qnsBoSUzc';
-            const PHOTO_SHEET_NAME = 'បញ្ជឺឈ្មោះរួម';
-            const PHOTO_SHEET_URL = `https://docs.google.com/spreadsheets/d/${PHOTO_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${PHOTO_SHEET_NAME}`;
-            
-            const PRIORITY_SHEET_ID = '1_Kgl8UQXRsVATt_BOHYQjVWYKkRIBA12R-qnsBoSUzc';
-            const PRIORITY_SHEET_NAME = 'Priority';
-            const PRIORITY_SHEET_URL = `https://docs.google.com/spreadsheets/d/${PRIORITY_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${PRIORITY_SHEET_NAME}`;
-
-            // --- DOM ELEMENTS ---
-            const monthYearFilter = document.getElementById('month-year-filter');
-            const dateFilter = document.getElementById('date-filter');
-            const filterBtn = document.getElementById('filter-btn');
-            const resetBtn = document.getElementById('reset-btn');
-            const exportBtn = document.getElementById('export-btn');
-            const tableBody = document.getElementById('table-body');
-            const cardsContainer = document.getElementById('cards-container');
-            const loaderContainer = document.getElementById('loader-container');
-            const noDataContainer = document.getElementById('no-data');
-            const summaryEl = document.getElementById('summary');
-            const mainTitle = document.getElementById('main-title');
-            const filterBox = document.getElementById('filter-box');
-            
-            const paginationControls = document.getElementById('pagination-controls');
-            const prevPageBtn = document.getElementById('prev-page-btn');
-            const nextPageBtn = document.getElementById('next-page-btn');
-            const pageIndicator = document.getElementById('page-indicator');
-            
-            const detailsModal = document.getElementById('details-modal');
-            const closeModalBtn = document.getElementById('close-details-modal-btn');
-            const downloadDetailsBtn = document.getElementById('download-details-btn');
-            const modalEmployeeName = document.getElementById('modal-employee-name');
-            const modalEmployeeId = document.getElementById('modal-employee-id');
-            const modalMonthYear = document.getElementById('modal-month-year');
-            const modalAttendanceList = document.getElementById('modal-attendance-list');
-            const modalSummary = document.getElementById('modal-summary');
-            const modalPhotoContainer = document.getElementById('modal-photo-container');
-            
-            const exportModal = document.getElementById('export-modal');
-            const closeExportModalBtn = document.getElementById('close-export-modal-btn');
-            const exportDateList = document.getElementById('export-date-list');
-
-            let allRecords = [];
-            let groupedRecords = new Map();
-            let filterHideTimer = null;
-            let employeePhotos = new Map();
-            let priorityNames = [];
-            let availableDates = new Map();
-
-            let mobilePaginatedRecords = [];
-            let currentPage = 1;
-            let totalPages = 0;
-            const itemsPerPage = 4;
-            let touchStartX = 0;
-            let touchEndX = 0;
-
-            const initializeApp = async () => {
-                addEventListeners();
-                await fetchData();
-                filterAndRender(); 
-                resetFilterTimer(); 
-            };
-            
-            const addEventListeners = () => {
-                filterBtn.addEventListener('click', filterAndRender);
-                resetBtn.addEventListener('click', () => {
-                    if (monthYearFilter.options.length > 0) {
-                        monthYearFilter.selectedIndex = 0;
-                        updateDateFilter();
-                        dateFilter.selectedIndex = 0;
-                    }
-                    filterAndRender();
-                });
-                exportBtn.addEventListener('click', showExportOptions);
-                tableBody.addEventListener('click', handleDetailViewClick);
-                cardsContainer.addEventListener('click', handleDetailViewClick);
-                closeModalBtn.addEventListener('click', hideEmployeeDetails);
-                downloadDetailsBtn.addEventListener('click', downloadDetailsAsPdf);
-                detailsModal.addEventListener('click', (e) => { if (e.target === detailsModal) hideEmployeeDetails(); });
-                closeExportModalBtn.addEventListener('click', hideExportOptions);
-                exportModal.addEventListener('click', (e) => { if (e.target === exportModal) hideExportOptions(); });
-                mainTitle.addEventListener('click', toggleFilterBox);
-                filterBox.addEventListener('mousemove', resetFilterTimer);
-                filterBox.addEventListener('input', resetFilterTimer);
-                filterBox.addEventListener('change', resetFilterTimer);
-                prevPageBtn.addEventListener('click', prevPage);
-                nextPageBtn.addEventListener('click', nextPage);
-                cardsContainer.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-                cardsContainer.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); });
-                monthYearFilter.addEventListener('change', () => {
-                    updateDateFilter();
-                    filterAndRender();
-                });
-                dateFilter.addEventListener('change', filterAndRender);
-            };
-
-            const handleDetailViewClick = (e) => {
-                const targetElement = e.target.closest('[data-employee-id]');
-                if (targetElement) showEmployeeDetails(targetElement.dataset.employeeId);
-            };
-
-            const isValidRecord = (rec) => rec.checkIn && rec.checkIn !== 'N/A' && rec.checkIn !== '' && rec.checkOut && rec.checkOut !== 'N/A' && rec.checkOut !== '';
-
-            const fetchData = async () => {
-                showLoader(true);
-                try {
-                    const [attendanceRes, photoRes, priorityRes] = await Promise.all([
-                        fetch(SHEET_URL),
-                        fetch(PHOTO_SHEET_URL),
-                        fetch(PRIORITY_SHEET_URL)
-                    ]);
-                    const [attendanceText, photoText, priorityText] = await Promise.all([
-                        attendanceRes.text(),
-                        photoRes.text(),
-                        priorityRes.text()
-                    ]);
-
-                    const attendanceJsonText = attendanceText.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1];
-                    const photoJsonText = photoText.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1];
-                    const priorityJsonText = priorityText.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1];
-                    
-                    const attendanceData = JSON.parse(attendanceJsonText);
-                    const photoData = JSON.parse(photoJsonText);
-                    const priorityData = JSON.parse(priorityJsonText);
-
-                    employeePhotos = parsePhotoData(photoData.table);
-                    priorityNames = parsePriorityData(priorityData.table);
-                    
-                    let parsedRecords = parseSheetData(attendanceData.table);
-                    // IMPROVEMENT: Filter only individual invalid records, not entire days.
-                    // This provides a more accurate view if some data is missing.
-                    allRecords = parsedRecords.filter(isValidRecord);
-                    
-                    populateFilters();
-
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                    reportContainer.innerHTML = `<p class="text-center text-red-500">Could not load data. Please check the Sheet IDs.</p>`;
-                } finally {
-                    showLoader(false);
-                }
-            };
-
-            const populateFilters = () => {
-                availableDates = new Map();
-                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-                
-                allRecords.forEach(rec => {
-                    const date = rec.date;
-                    const monthYearKey = `${date.getFullYear()}-${date.getMonth()}`;
-                    if (!availableDates.has(monthYearKey)) {
-                        availableDates.set(monthYearKey, new Set());
-                    }
-                    availableDates.get(monthYearKey).add(toISODateString(date));
-                });
-
-                const sortedMonthYearKeys = Array.from(availableDates.keys()).sort((a, b) => {
-                    const [yearA, monthA] = a.split('-').map(Number);
-                    const [yearB, monthB] = b.split('-').map(Number);
-                    if (yearB !== yearA) return yearB - yearA;
-                    return monthB - monthA;
-                });
-
-                monthYearFilter.innerHTML = '';
-                sortedMonthYearKeys.forEach(key => {
-                    const [year, month] = key.split('-').map(Number);
-                    const option = document.createElement('option');
-                    option.value = key;
-                    option.textContent = `${khmerMonths[month]} ${year}`;
-                    monthYearFilter.appendChild(option);
-                });
-
-                if (monthYearFilter.options.length > 0) {
-                    monthYearFilter.value = sortedMonthYearKeys[0];
-                }
-                updateDateFilter();
-            };
-
-            const updateDateFilter = () => {
-                const selectedMonthYear = monthYearFilter.value;
-                const dates = availableDates.get(selectedMonthYear);
-                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-
-                dateFilter.innerHTML = '<option value="all">គ្រប់កាលបរិច្ឆេទ</option>';
-
-                if (dates) {
-                    const sortedDates = Array.from(dates).sort();
-                    sortedDates.forEach(dateStr => {
-                        const date = new Date(dateStr + 'T00:00:00');
-                        const option = document.createElement('option');
-                        option.value = dateStr;
-                        option.textContent = `ថ្ងៃទី ${date.getDate()} ${khmerMonths[date.getMonth()]} ${date.getFullYear()}`;
-                        dateFilter.appendChild(option);
-                    });
-                }
-            };
-            
-            const getDisplayValue = (cell, defaultValue = 'N/A') => {
-                if (!cell) return defaultValue;
-                // Prefer the formatted value 'f', but fall back to the raw value 'v'
-                const value = (cell.f !== null && cell.f !== undefined) ? cell.f : cell.v;
-                return (value === null || value === undefined) ? defaultValue : value.toString();
-            };
-
-            const parsePhotoData = (table) => {
-                const photos = new Map();
-                if (!table.rows) return photos;
-                table.rows.forEach(row => {
-                    if (row.c && row.c[4] && row.c[26]) {
-                        const employeeId = getDisplayValue(row.c[4]); // E
-                        const photoUrl = getDisplayValue(row.c[26]); // AA
-                        if (employeeId !== 'N/A' && photoUrl !== 'N/A' && photoUrl.startsWith('http')) {
-                            photos.set(employeeId, photoUrl);
-                        }
-                    }
-                });
-                return photos;
-            };
-
-            const parsePriorityData = (table) => {
-                if (!table.rows) return [];
-                return table.rows.map(row => getDisplayValue(row.c[0], null)).filter(name => name !== null);
-            };
-            
-            const parseSheetData = (table) => {
-                if (!table.rows) return [];
-                return table.rows.map(row => {
-                    if (!row.c || row.c.every(cell => !cell || cell.v === null)) return null;
-                    const id = getDisplayValue(row.c[6]); // G
-                    return { 
-                        id, 
-                        name: getDisplayValue(row.c[4]), // E
-                        gender: getDisplayValue(row.c[5]), // F
-                        department: getDisplayValue(row.c[3]), // D -> ផ្នែក
-                        class: getDisplayValue(row.c[2]), // C -> ថ្នាក់
-                        date: parseDate(getDisplayValue(row.c[7])), // H
-                        schedule: getDisplayValue(row.c[8]), // I -> កាលវិភាគ
-                        checkIn: getDisplayValue(row.c[9]), // J
-                        checkOut: getDisplayValue(row.c[10]), // K
-                        other: getDisplayValue(row.c[12], ''), // M
-                        photo: employeePhotos.get(id) || null 
-                    };
-                }).filter(record => record && record.date);
-            };
-            
-            const parseDate = (dateString) => {
-                 if (!dateString || typeof dateString !== 'string' || dateString === 'N/A') return null;
-
-                 // IMPROVEMENT: Handle Google Sheets' native JSON date format "Date(YYYY,M,D)"
-                 // This is more reliable than parsing formatted strings.
-                 const gSheetDateMatch = dateString.match(/Date\((\d{4}),(\d{1,2}),(\d{1,2})\)/);
-                 if (gSheetDateMatch) {
-                     // The month from Google Sheets (index 2) is 0-indexed (0=Jan, 1=Feb, etc.)
-                     const year = parseInt(gSheetDateMatch[1], 10);
-                     const month = parseInt(gSheetDateMatch[2], 10);
-                     const day = parseInt(gSheetDateMatch[3], 10);
-                     return new Date(year, month, day);
-                 }
-                 
-                 // Fallback for manually entered date strings like '13-Oct-2025'
-                 const monthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
-                 let parts = dateString.split('-');
-                 if (parts.length === 3 && monthMap.hasOwnProperty(parts[1])) {
-                     return new Date(parts[2], monthMap[parts[1]], parts[0]);
-                 }
-
-                 // Fallback for 'DD/MM/YYYY'
-                 parts = dateString.split('/');
-                 if (parts.length === 3) {
-                     return new Date(parts[2], parts[1] - 1, parts[0]);
-                 }
-                 
-                 return null; // Return null if no format matches
-            };
-
-            const groupAndSortRecords = (records) => {
-                const grouped = new Map();
-                records.forEach(rec => {
-                    if (!grouped.has(rec.id)) grouped.set(rec.id, []);
-                    grouped.get(rec.id).push(rec);
-                });
-
-                const sortedEntries = Array.from(grouped.entries());
-
-                sortedEntries.sort(([, recordsA], [, recordsB]) => {
-                    const a = recordsA[0]; const b = recordsB[0];
-                    const aPriority = priorityNames.indexOf(a.name.trim());
-                    const bPriority = priorityNames.indexOf(b.name.trim());
-                    if (aPriority !== -1 && bPriority !== -1) return aPriority - bPriority;
-                    if (aPriority !== -1) return -1;
-                    if (bPriority !== -1) return 1;
-                    const isA_IT = a.department.toUpperCase().trim() === 'IT SUPPORT';
-                    const isB_IT = b.department.toUpperCase().trim() === 'IT SUPPORT';
-                    if (isA_IT && !isB_IT) return -1;
-                    if (!isA_IT && isB_IT) return 1;
-                    return a.name.localeCompare(b.name, 'km');
-                });
-                
-                return new Map(sortedEntries);
-            };
-
-            const filterAndRender = () => {
-                const selectedMonthYear = monthYearFilter.value;
-                const selectedDate = dateFilter.value;
-
-                if (!selectedMonthYear) {
-                    renderData(new Map());
-                    summaryEl.textContent = "គ្មានទិន្នន័យសម្រាប់បង្ហាញ";
-                    return;
-                }
-
-                let filteredRecords;
-
-                if (selectedDate === 'all') {
-                    const [year, month] = selectedMonthYear.split('-').map(Number);
-                    filteredRecords = allRecords.filter(record => {
-                        const recordDate = record.date;
-                        return recordDate && recordDate.getMonth() === month && recordDate.getFullYear() === year;
-                    });
-                      const [yearText, monthText] = selectedMonthYear.split('-').map(Number);
-                       updateSummary(filteredRecords.length, monthText, yearText);
-                } else {
-                    filteredRecords = allRecords.filter(record => {
-                        return record.date && toISODateString(record.date) === selectedDate;
-                    });
-                    const date = new Date(selectedDate + 'T00:00:00');
-                    const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-                    const summaryText = `កំពុងបង្ហាញ ${filteredRecords.length} កំណត់ត្រា សម្រាប់ថ្ងៃទី ${date.getDate()} ${khmerMonths[date.getMonth()]} ${date.getFullYear()}`;
-                    summaryEl.textContent = summaryText;
-                }
-
-                groupedRecords = groupAndSortRecords(filteredRecords);
-                renderData(groupedRecords);
-            };
-            
-            const renderData = (groupedData) => {
-                if (groupedData.size === 0) {
-                    tableBody.innerHTML = ''; cardsContainer.innerHTML = ''; showNoData(true); return;
-                }
-                showNoData(false);
-                tableBody.innerHTML = Array.from(groupedData.values()).map(createTableRowGroup).join('');
-                mobilePaginatedRecords = Array.from(groupedData.values());
-                totalPages = Math.ceil(mobilePaginatedRecords.length / itemsPerPage);
-                currentPage = 1;
-                displayMobilePage(true);
-            };
-
-            const createTableRowGroup = (records) => {
-                records.sort((a,b) => a.date - b.date); // Sort records by date for each employee
-
-                return records.map((record, index) => {
-                    const trClass = "hover:bg-gray-50 cursor-pointer";
-                    const dataId = `data-employee-id="${record.id}"`;
-
-                    if (index === 0) {
-                        const placeholder = `https://placehold.co/40x40/EFEFEF/333333?text=${encodeURIComponent(record.name.charAt(0))}`;
-                        const photoHTML = `<img src="${record.photo || placeholder}" onerror="this.src='${placeholder}'" class="h-8 w-8 rounded-full object-cover">`;
-                        const cellClasses = "px-4 py-3 whitespace-nowrap text-sm align-middle";
-                        return `
-                            <tr class="${trClass} border-t-2 border-gray-200" ${dataId}>
-                                <td class="${cellClasses} text-gray-700">${record.id}</td>
-                                <td class="${cellClasses} font-medium text-gray-900 flex items-center gap-3">${photoHTML}<span>${record.name}</span></td>
-                                <td class="${cellClasses} text-gray-700">${record.gender}</td>
-                                <td class="${cellClasses} text-gray-700">${record.department}</td>
-                                <td class="${cellClasses} text-gray-700">${record.date.toLocaleDateString('en-GB')}</td>
-                                <td class="${cellClasses} text-gray-700">${record.checkIn}</td>
-                                <td class="${cellClasses} text-gray-700">${record.checkOut}</td>
-                                <td class="${cellClasses} text-gray-700">${record.other}</td>
-                                <td class="${cellClasses} text-gray-700">${record.schedule}</td>
-                            </tr>`;
-                    } else {
-                        const cellClasses = "px-4 py-3 whitespace-nowrap text-sm align-middle";
-                        return `
-                            <tr class="${trClass}" ${dataId}>
-                                <td class="px-4 py-3"></td>
-                                <td class="px-4 py-3"></td>
-                                <td class="px-4 py-3"></td>
-                                <td class="px-4 py-3"></td>
-                                <td class="${cellClasses} text-gray-700">${record.date.toLocaleDateString('en-GB')}</td>
-                                <td class="${cellClasses} text-gray-700">${record.checkIn}</td>
-                                <td class="${cellClasses} text-gray-700">${record.checkOut}</td>
-                                <td class="${cellClasses} text-gray-700">${record.other}</td>
-                                <td class="${cellClasses} text-gray-700">${record.schedule}</td>
-                            </tr>`;
-                    }
-                }).join('');
-            };
-            
-            const createCard = (records) => {
-                const record = records[0]; // Use the first record for general info
-                const placeholder = `https://placehold.co/100x100/EFEFEF/333333?text=${encodeURIComponent(record.name.charAt(0))}`;
-                const photoHTML = `<img src="${record.photo || placeholder}" onerror="this.src='${placeholder}'" class="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm">`;
-                const attendanceCount = records.length;
-                return `<div class="bg-white rounded-2xl shadow-lg border border-gray-200/80 overflow-hidden transform hover:scale-[1.02] active:scale-[1.01] transition-transform duration-300 ease-in-out cursor-pointer" data-employee-id="${record.id}"><div class="p-4 bg-gray-50/70 flex justify-between items-center border-b border-gray-200/80"><div class="flex items-center gap-3">${photoHTML}<div><p class="font-bold text-lg text-blue-700">${record.name}</p><p class="text-xs text-gray-500 font-mono">ID: ${record.id}</p></div></div><span class="text-sm font-semibold px-3 py-1 rounded-full ${record.gender === 'ប្រុស' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}">${record.gender}</span></div><div class="p-4 text-center"><p class="text-gray-600">វត្តមានខែនេះ</p><p class="text-3xl font-bold text-blue-600">${attendanceCount} <span class="text-lg font-normal">ថ្ងៃ</span></p></div></div>`;
-            };
-
-            const displayMobilePage = (isInitial = false, direction = 'right') => {
-                if (totalPages > 0) {
-                    paginationControls.style.display = 'flex';
-                    const start = (currentPage - 1) * itemsPerPage;
-                    const pageItems = mobilePaginatedRecords.slice(start, start + itemsPerPage);
-                    cardsContainer.innerHTML = pageItems.map(createCard).join('');
-                    if (!isInitial) {
-                       cardsContainer.classList.remove('slide-in-right', 'slide-in-left');
-                       void cardsContainer.offsetWidth; // Trigger reflow
-                       cardsContainer.classList.add(direction === 'right' ? 'slide-in-right' : 'slide-in-left');
-                    }
-                } else {
-                    cardsContainer.innerHTML = '';
-                    paginationControls.style.display = 'none';
-                }
-                updatePaginationControls();
-            };
-
-            const updatePaginationControls = () => {
-                if (totalPages > 0) {
-                    pageIndicator.textContent = `ទំព័រ ${currentPage} / ${totalPages}`;
-                    prevPageBtn.disabled = currentPage === 1;
-                    nextPageBtn.disabled = currentPage >= totalPages;
-                }
-            };
-            const nextPage = () => { if (currentPage < totalPages) { currentPage++; displayMobilePage(false, 'right'); } };
-            const prevPage = () => { if (currentPage > 1) { currentPage--; displayMobilePage(false, 'left'); } };
-            const handleSwipe = () => {
-                const swipeThreshold = 50;
-                if (touchStartX - touchEndX > swipeThreshold) nextPage();
-                if (touchEndX - touchStartX > swipeThreshold) prevPage();
-            };
-            
-            const calculateDurationInMinutes = (checkInStr, checkOutStr) => {
-                try {
-                    const [inHours, inMinutes] = checkInStr.split(':').map(Number);
-                    const [outHours, outMinutes] = checkOutStr.split(':').map(Number);
-                    if ([inHours, inMinutes, outHours, outMinutes].some(isNaN)) return 0;
-                    return (outHours * 60 + outMinutes) - (inHours * 60 + inMinutes);
-                } catch (e) { return 0; }
-            };
-
-            const showEmployeeDetails = (employeeId) => {
-                const employeeMonthRecords = groupedRecords.get(employeeId);
-                if (!employeeMonthRecords || employeeMonthRecords.length === 0) return;
-
-                const employeeInfo = employeeMonthRecords[0];
-                const selectedMonthYear = monthYearFilter.value;
-                const [year, month] = selectedMonthYear.split('-').map(Number);
-                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-                
-                const placeholder = `https://placehold.co/80x80/EFEFEF/333333?text=${encodeURIComponent(employeeInfo.name.charAt(0))}`;
-                modalPhotoContainer.innerHTML = `<img src="${employeeInfo.photo || placeholder}" onerror="this.src='${placeholder}'" class="h-20 w-20 rounded-full object-cover border-4 border-white shadow-lg">`;
-                modalEmployeeName.textContent = employeeInfo.name;
-                modalEmployeeId.textContent = `ID: ${employeeInfo.id} | ផ្នែក: ${employeeInfo.department}`;
-                modalMonthYear.textContent = `${khmerMonths[month]} ${year}`;
-
-                const presentRecords = employeeMonthRecords.filter(isValidRecord);
-                if (presentRecords.length > 0) {
-                    presentRecords.sort((a, b) => a.date - b.date);
-                    modalAttendanceList.innerHTML = presentRecords.map(rec => {
-                        const day = rec.date.getDate().toString().padStart(2, '0');
-                        const statusHTML = `<div class="flex items-center text-sm"><span class="font-semibold text-green-600">${rec.checkIn}</span><span class="text-gray-400 mx-2">→</span><span class="font-semibold text-red-600">${rec.checkOut}</span></div>`;
-                        const otherHTML = rec.other ? `<div class="mt-1 text-xs text-gray-500 pl-4 border-l-2 border-gray-200">${rec.other}</div>` : '';
-                        return `<div class="bg-gray-50 p-3 rounded-lg border border-gray-200 transition-all hover:shadow-md hover:border-blue-300"><div class="flex items-center justify-between"><div class="font-bold text-gray-800">${day} ${khmerMonths[rec.date.getMonth()]}</div>${statusHTML}</div>${otherHTML}</div>`;
-                    }).join('');
-                    const totalMinutes = presentRecords.reduce((acc, rec) => acc + calculateDurationInMinutes(rec.checkIn, rec.checkOut), 0);
-                    const hours = Math.floor(totalMinutes / 60);
-                    const minutes = totalMinutes % 60;
-                    modalSummary.innerHTML = `<div class="grid grid-cols-2 gap-4 text-center"><div><p class="text-sm text-gray-500">វត្តមានសរុប</p><p class="text-2xl font-bold text-green-600">${presentRecords.length} <span class="text-base font-normal">ថ្ងៃ</span></p></div><div><p class="text-sm text-gray-500">ម៉ោងធ្វើការសរុប</p><p class="text-2xl font-bold text-blue-600">${hours} <span class="text-base font-normal">ម៉ោង</span> ${minutes} <span class="text-base font-normal">នាទី</span></p></div></div>`;
-                } else {
-                    modalAttendanceList.innerHTML = `<p class="text-center text-gray-500 p-4">គ្មានកំណត់ត្រាវត្តមានសម្រាប់ខែនេះទេ។</p>`;
-                    modalSummary.innerHTML = '';
-                }
-                detailsModal.classList.add('active');
-            };
-            
-            const hideEmployeeDetails = () => detailsModal.classList.remove('active');
-
-            const showExportOptions = () => {
-                const datesInView = new Set();
-                groupedRecords.forEach(records => {
-                    records.forEach(rec => datesInView.add(toISODateString(rec.date)));
-                });
-
-                if (datesInView.size === 0) {
-                    exportDateList.innerHTML = '<p class="text-center text-gray-500">គ្មានទិន្នន័យសម្រាប់ទាញយកទេ។</p>';
-                    exportModal.classList.add('active');
-                    return;
-                }
-                
-                const sortedDates = Array.from(datesInView).sort();
-                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-                
-                exportDateList.innerHTML = sortedDates.map(dateStr => {
-                    const date = new Date(dateStr + 'T00:00:00');
-                    const day = date.getDate();
-                    const month = khmerMonths[date.getMonth()];
-                    const year = date.getFullYear();
-                    return `<button data-date="${dateStr}" class="w-full text-left p-3 bg-gray-50 hover:bg-blue-100 rounded-lg transition-colors">ថ្ងៃទី ${day} ${month} ${year}</button>`;
-                }).join('');
-                
-                exportModal.classList.add('active');
-            };
-
-            exportDateList.addEventListener('click', (e) => {
-                const target = e.target.closest('button[data-date]');
-                if (target) {
-                    exportDataForDate(target.dataset.date);
-                }
-            });
-
-            const exportDataForDate = (dateStr) => {
-                const dateToExport = new Date(dateStr + 'T00:00:00');
-                const recordsForDate = allRecords.filter(rec => rec.date && toISODateString(rec.date) === dateStr);
-                
-                if (recordsForDate.length === 0) return;
-                
-                const toKhmerNumeral = (num) => {
-                    const khmerNums = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
-                    return String(num).split('').map(digit => khmerNums[parseInt(digit, 10)]).join('');
-                };
-
-                const exportData = recordsForDate.map(rec => ({
-                    'ឈ្មោះ': rec.name,
-                    'ភេទ': rec.gender,
-                    'ថ្នាក់': rec.class,
-                    'ម៉ោងចូល': rec.checkIn,
-                    'ម៉ោងចេញ': rec.checkOut,
-                    'កាលវិភាគ': rec.schedule
-                }));
-
-                const worksheet = XLSX.utils.json_to_sheet(exportData);
-                const workbook = XLSX.utils.book_new();
-                
-                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-                const day = toKhmerNumeral(dateToExport.getDate());
-                const month = khmerMonths[dateToExport.getMonth()];
-                const year = toKhmerNumeral(dateToExport.getFullYear());
-                const sheetName = `${day} ${month} ${year}`;
-                const fileName = `DI_Report-${day}-${month}-${year}.xlsx`;
-
-                XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-                XLSX.writeFile(workbook, fileName);
-                hideExportOptions();
-            };
-            
-            const hideExportOptions = () => exportModal.classList.remove('active');
-
-            const downloadDetailsAsPdf = async () => {
-                const { jsPDF } = window.jspdf;
-                const modalContent = detailsModal.querySelector('.modal-content');
-                const scrollableContent = document.getElementById('modal-scroll-content');
-                const actionButtons = document.getElementById('modal-action-buttons');
-                const photoContainer = document.getElementById('modal-photo-container');
-                const modalHeader = modalContent.querySelector('.pt-12');
-
-                const employeeName = modalEmployeeName.textContent.trim();
-                const monthYear = modalMonthYear.textContent.trim().replace(/\s+/g, '-');
-
-                if (!modalContent || !scrollableContent || !photoContainer || !modalHeader) return;
-
-                const originalStyles = {
-                    modal: { maxHeight: modalContent.style.maxHeight },
-                    scroll: { overflowY: scrollableContent.style.overflowY },
-                    photo: { transform: photoContainer.style.transform, top: photoContainer.style.top },
-                    header: { paddingTop: modalHeader.style.paddingTop },
-                    buttons: { visibility: actionButtons.style.visibility }
-                };
-
-                try {
-                    // --- Prepare for capture by temporarily modifying styles ---
-                    actionButtons.style.visibility = 'hidden';
-                    
-                    // Move photo into the document flow to ensure it's captured
-                    photoContainer.style.top = '1rem'; // Move it down from the edge
-                    photoContainer.style.transform = 'translateX(-50%)'; // Remove vertical translate
-                    
-                    // Increase header padding to make space for the photo
-                    modalHeader.style.paddingTop = '6rem'; // h-20 (5rem) + 1rem gap
-
-                    // Expand modal and scrollable area to their full height
-                    modalContent.style.maxHeight = 'none';
-                    scrollableContent.style.overflowY = 'visible';
-
-                    await new Promise(resolve => setTimeout(resolve, 100));
-
-                    // --- Capture and Generate PDF ---
-                    const canvas = await html2canvas(modalContent, {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff'
-                    });
-                    
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF({
-                        orientation: 'portrait',
-                        unit: 'pt',
-                        format: 'a4'
-                    });
-
-                    const imgProps = pdf.getImageProperties(imgData);
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pageHeight = pdf.internal.pageSize.getHeight();
-                    
-                    const margin = 40;
-                    const imgWidth = pdfWidth - margin;
-                    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-                    
-                    let heightLeft = imgHeight;
-                    let position = 0;
-
-                    pdf.addImage(imgData, 'PNG', margin / 2, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-
-                    while (heightLeft > 0) {
-                        position -= pageHeight;
-                        pdf.addPage();
-                        pdf.addImage(imgData, 'PNG', margin / 2, position, imgWidth, imgHeight);
-                        heightLeft -= pageHeight;
-                    }
-                    
-                    pdf.save(`Report-${employeeName}-${monthYear}.pdf`);
-
-                } catch (err) {
-                    console.error('Error creating PDF:', err);
-                } finally {
-                    // --- IMPORTANT: Revert all styles back to original ---
-                    modalContent.style.maxHeight = originalStyles.modal.maxHeight;
-                    scrollableContent.style.overflowY = originalStyles.scroll.overflowY;
-                    photoContainer.style.transform = originalStyles.photo.transform;
-                    photoContainer.style.top = originalStyles.photo.top;
-                    modalHeader.style.paddingTop = originalStyles.header.paddingTop;
-                    actionButtons.style.visibility = originalStyles.buttons.visibility;
-                }
-            };
-
-
-            const updateSummary = (count, month, year) => {
-                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
-                const monthName = khmerMonths[month];
-                summaryEl.textContent = `កំពុងបង្ហាញ ${count} កំណត់ត្រា សម្រាប់ខែ ${monthName} ឆ្នាំ ${year}`;
-            };
-            const isMobile = () => window.innerWidth < 768;
-            const resetFilterTimer = () => {
-                if (!isMobile()) return;
-                clearTimeout(filterHideTimer);
-                filterHideTimer = setTimeout(() => filterBox.classList.add('hidden-mobile'), 10000);
-            };
-            const toggleFilterBox = () => {
-                if (!isMobile()) return;
-                filterBox.classList.toggle('hidden-mobile');
-                if (!filterBox.classList.contains('hidden-mobile')) resetFilterTimer();
-                else clearTimeout(filterHideTimer);
-            };
-            const showLoader = (show) => {
-                loaderContainer.style.display = show ? 'flex' : 'none';
-                if (show) { showNoData(false); tableBody.innerHTML = ''; cardsContainer.innerHTML = ''; }
-            };
-            const showNoData = (show) => { noDataContainer.style.display = show ? 'block' : 'none'; };
-            const toISODateString = (date) => `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-            initializeApp();
-        });
-    </script>
+    <div class="container mx-auto p-2 sm:p-4">
+        <!-- Header Section -->
+        <header class="bg-white p-4 rounded-xl shadow-md mb-6 border border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+                 <h1 id="main-title" class="text-2xl md:text-3xl font-bold text-blue-700">របាយការណ៍វត្តមានបុគ្គលិក</h1>
+                 <a href="https://script.google.com/macros/s/AKfycbwpxs3CAM4nYJD1mpwg8i_2h2vhz9OD4nNP2K29Hr_IjkLiaHTiuoj0-PlY3sugB_sz1Q/exec" target="_blank" title="ត្រឡប់ទៅប្រព័ន្ធគ្រប់គ្រងច្បាប់និស្សិត" class="p-2.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-all shadow-sm active:scale-95 flex justify-center">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                       <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                     </svg>
+                 </a>
+            </div>
+            
+            <!-- Filter Menu -->
+            <div id="filter-box" class="p-3 bg-gray-50 rounded-lg border">
+                <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+                    <!-- Month & Year Filter -->
+                    <div class="flex-1">
+                        <label for="month-year-filter" class="block text-sm font-medium text-gray-600 mb-1">ខែ និង ឆ្នាំ</label>
+                        <select id="month-year-filter" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition">
+                        </select>
+                    </div>
+
+                    <!-- Date Filter (Now hidden on mobile) -->
+                    <div class="flex-1 hidden md:block">
+                        <label for="date-filter" class="block text-sm font-medium text-gray-600 mb-1">កាលបរិច្ឆេទ</label>
+                        <select id="date-filter" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition">
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2">
+                        <button id="filter-btn" title="បង្ហាញ" class="w-full sm:w-auto p-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" /></svg>
+                        </button>
+                         <button id="reset-btn" title="បច្ចុប្បន្ន" class="w-full sm:w-auto p-2.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5m15 11v-5h-5m0 0l-1.5-1.5a9 9 0 10-12.728 0" /></svg>
+                           </button>
+                        <button id="export-btn" title="ទាញយក Excel" class="w-full sm:w-auto p-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all shadow active:scale-95 flex-1 sm:flex-none flex justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm3.5 1.5a.5.5 0 00-1 0v3a.5.5 0 001 0v-3zM6.5 8a.5.5 0 000-1h3a.5.5 0 000 1h-3zM5 11.5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5zm1.5 2.5a.5.5 0 00-1 0v3a.5.5 0 001 0v-3zm2-3a.5.5 0 000-1h3a.5.5 0 000 1h-3z" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+             <div id="summary" class="mt-4 text-sm text-gray-600 font-medium"></div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="report-container">
+            <!-- Loading Spinner -->
+            <div id="loader-container" class="flex justify-center items-center p-10">
+                <div id="loader"></div>
+            </div>
+
+            <!-- Table for Desktop -->
+            <div class="hidden md:block overflow-x-auto bg-white rounded-xl shadow-md border border-gray-200">
+                <table class="min-w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">អត្តលេខ</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ឈ្មោះបុគ្គលិក</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ភេទ</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ផ្នែក</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">កាលបរិច្ឆេទ</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ម៉ោងចូល</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ម៉ោងចេញ</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">ផ្សេងៗ</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">កាលវិភាគ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Data rows will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Mobile View Container -->
+            <div id="mobile-view-container" class="md:hidden">
+                <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <div id="pagination-controls" class="flex items-center justify-center gap-4 mt-6">
+                    <button id="prev-page-btn" class="p-2.5 bg-white rounded-full shadow-md border hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-90"><svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+                    <span id="page-indicator" class="text-sm font-semibold text-gray-700 w-24 text-center"></span>
+                    <button id="next-page-btn" class="p-2.5 bg-white rounded-full shadow-md border hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-90"><svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+                </div>
+            </div>
+
+            <!-- No Data Message -->
+            <div id="no-data" class="hidden text-center p-10 bg-white rounded-xl shadow-md">
+                <p class="text-gray-500 font-semibold">គ្មានទិន្នន័យសម្រាប់បង្ហាញ</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col relative">
+            <div id="modal-photo-container" class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+            
+            <!-- Action Buttons Container -->
+            <div id="modal-action-buttons" class="absolute top-2 right-2 flex gap-1 z-10">
+                <button id="download-details-btn" title="ទាញយក PDF" class="text-gray-400 hover:text-blue-600 hover:bg-gray-200 rounded-full p-2 transition-colors">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                </button>
+                <button id="close-details-modal-btn" class="text-gray-400 hover:text-gray-800 hover:bg-gray-200 rounded-full p-2 transition-colors">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <div class="pt-12 p-4 border-b text-center bg-gray-50 rounded-t-2xl"><h2 class="text-xl font-bold text-blue-700" id="modal-employee-name"></h2><p class="text-sm text-gray-500" id="modal-employee-id"></p></div>
+            <div id="modal-scroll-content" class="p-4 overflow-y-auto"><h3 class="font-bold text-lg mb-3 text-gray-800">កំណត់ត្រាវត្តមានប្រចាំខែ <span id="modal-month-year" class="text-blue-600"></span></h3><div id="modal-attendance-list" class="space-y-3"></div></div>
+            <div id="modal-summary" class="p-4 bg-gray-100 border-t rounded-b-2xl mt-auto"></div>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b flex justify-between items-center"><h2 class="text-xl font-bold text-gray-800">ទាញយករបាយការណ៍ Excel</h2><button id="close-export-modal-btn" class="text-gray-400 hover:text-gray-800 hover:bg-gray-200 rounded-full p-2 transition-colors"><svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+            <div class="p-4 overflow-y-auto"><p class="text-sm text-gray-600 mb-3">សូមជ្រើសរើសកាលបរិច្ឆេទសម្រាប់ទាញយក៖</p><div id="export-date-list" class="space-y-2"></div></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURATION ---
+            const SHEET_ID = '14eA00GXamqLkhuLAzVYPOBKads7XUZ5mfVRyqSGQwfk';
+            const SHEET_NAME = 'Data';
+            const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+            
+            const PHOTO_SHEET_ID = '1_Kgl8UQXRsVATt_BOHYQjVWYKkRIBA12R-qnsBoSUzc';
+            const PHOTO_SHEET_NAME = 'បញ្ជឺឈ្មោះរួម';
+            const PHOTO_SHEET_URL = `https://docs.google.com/spreadsheets/d/${PHOTO_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${PHOTO_SHEET_NAME}`;
+            
+            const PRIORITY_SHEET_ID = '1_Kgl8UQXRsVATt_BOHYQjVWYKkRIBA12R-qnsBoSUzc';
+            const PRIORITY_SHEET_NAME = 'Priority';
+            const PRIORITY_SHEET_URL = `https://docs.google.com/spreadsheets/d/${PRIORITY_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${PRIORITY_SHEET_NAME}`;
+
+            // --- DOM ELEMENTS ---
+            const monthYearFilter = document.getElementById('month-year-filter');
+            const dateFilter = document.getElementById('date-filter');
+            const filterBtn = document.getElementById('filter-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const tableBody = document.getElementById('table-body');
+            const cardsContainer = document.getElementById('cards-container');
+            const loaderContainer = document.getElementById('loader-container');
+            const noDataContainer = document.getElementById('no-data');
+            const summaryEl = document.getElementById('summary');
+            const mainTitle = document.getElementById('main-title');
+            const filterBox = document.getElementById('filter-box');
+            
+            const paginationControls = document.getElementById('pagination-controls');
+            const prevPageBtn = document.getElementById('prev-page-btn');
+            const nextPageBtn = document.getElementById('next-page-btn');
+            const pageIndicator = document.getElementById('page-indicator');
+            
+            const detailsModal = document.getElementById('details-modal');
+            const closeModalBtn = document.getElementById('close-details-modal-btn');
+            const downloadDetailsBtn = document.getElementById('download-details-btn');
+            const modalEmployeeName = document.getElementById('modal-employee-name');
+            const modalEmployeeId = document.getElementById('modal-employee-id');
+            const modalMonthYear = document.getElementById('modal-month-year');
+            const modalAttendanceList = document.getElementById('modal-attendance-list');
+            const modalSummary = document.getElementById('modal-summary');
+            const modalPhotoContainer = document.getElementById('modal-photo-container');
+            
+            const exportModal = document.getElementById('export-modal');
+            const closeExportModalBtn = document.getElementById('close-export-modal-btn');
+            const exportDateList = document.getElementById('export-date-list');
+
+            let allRecords = [];
+            let groupedRecords = new Map();
+            let filterHideTimer = null;
+            let employeePhotos = new Map();
+            let priorityNames = [];
+            let availableDates = new Map();
+
+            let mobilePaginatedRecords = [];
+            let currentPage = 1;
+            let totalPages = 0;
+            const itemsPerPage = 4;
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            const initializeApp = async () => {
+                addEventListeners();
+                await fetchData();
+                filterAndRender(); 
+                resetFilterTimer(); 
+            };
+            
+            const addEventListeners = () => {
+                filterBtn.addEventListener('click', filterAndRender);
+                resetBtn.addEventListener('click', () => {
+                    if (monthYearFilter.options.length > 0) {
+                        monthYearFilter.selectedIndex = 0;
+                        updateDateFilter();
+                        dateFilter.selectedIndex = 0;
+                    }
+                    filterAndRender();
+                });
+                exportBtn.addEventListener('click', showExportOptions);
+                tableBody.addEventListener('click', handleDetailViewClick);
+                cardsContainer.addEventListener('click', handleDetailViewClick);
+                closeModalBtn.addEventListener('click', hideEmployeeDetails);
+                downloadDetailsBtn.addEventListener('click', downloadDetailsAsPdf);
+                detailsModal.addEventListener('click', (e) => { if (e.target === detailsModal) hideEmployeeDetails(); });
+                closeExportModalBtn.addEventListener('click', hideExportOptions);
+                exportModal.addEventListener('click', (e) => { if (e.target === exportModal) hideExportOptions(); });
+                mainTitle.addEventListener('click', toggleFilterBox);
+                filterBox.addEventListener('mousemove', resetFilterTimer);
+                filterBox.addEventListener('input', resetFilterTimer);
+                filterBox.addEventListener('change', resetFilterTimer);
+                prevPageBtn.addEventListener('click', prevPage);
+                nextPageBtn.addEventListener('click', nextPage);
+                cardsContainer.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+                cardsContainer.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); });
+                monthYearFilter.addEventListener('change', () => {
+                    updateDateFilter();
+                    filterAndRender();
+                });
+                dateFilter.addEventListener('change', filterAndRender);
+            };
+
+            const handleDetailViewClick = (e) => {
+                const targetElement = e.target.closest('[data-employee-id]');
+                if (targetElement) showEmployeeDetails(targetElement.dataset.employeeId);
+            };
+
+            const isValidRecord = (rec) => rec.checkIn && rec.checkIn !== 'N/A' && rec.checkIn !== '' && rec.checkOut && rec.checkOut !== 'N/A' && rec.checkOut !== '';
+
+            const filterIncompleteDates = (records) => {
+                const recordsByDate = new Map();
+                records.forEach(rec => {
+                    if (!rec.date) return;
+                    const dateStr = toISODateString(rec.date);
+                    if (!recordsByDate.has(dateStr)) {
+                        recordsByDate.set(dateStr, []);
+                    }
+                    recordsByDate.get(dateStr).push(rec);
+                });
+
+                const validDates = new Set();
+                for (const [dateStr, dateRecords] of recordsByDate.entries()) {
+                    if (dateRecords.every(isValidRecord)) {
+                        validDates.add(dateStr);
+                    }
+                }
+                return records.filter(rec => rec.date && validDates.has(toISODateString(rec.date)));
+            };
+            
+            const fetchData = async () => {
+                showLoader(true);
+                try {
+                    const [attendanceRes, photoRes, priorityRes] = await Promise.all([
+                        fetch(SHEET_URL),
+                        fetch(PHOTO_SHEET_URL),
+                        fetch(PRIORITY_SHEET_URL)
+                    ]);
+                    const [attendanceText, photoText, priorityText] = await Promise.all([
+                        attendanceRes.text(),
+                        photoRes.text(),
+                        priorityRes.text()
+                    ]);
+
+                    const attendanceJsonText = attendanceText.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1];
+                    const photoJsonText = photoText.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1];
+                    const priorityJsonText = priorityText.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1];
+                    
+                    const attendanceData = JSON.parse(attendanceJsonText);
+                    const photoData = JSON.parse(photoJsonText);
+                    const priorityData = JSON.parse(priorityJsonText);
+
+                    employeePhotos = parsePhotoData(photoData.table);
+                    priorityNames = parsePriorityData(priorityData.table);
+                    
+                    let parsedRecords = parseSheetData(attendanceData.table);
+                    allRecords = filterIncompleteDates(parsedRecords); // Apply the strict filter
+                    
+                    populateFilters();
+
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    reportContainer.innerHTML = `<p class="text-center text-red-500">Could not load data. Please check the Sheet IDs.</p>`;
+                } finally {
+                    showLoader(false);
+                }
+            };
+
+            const populateFilters = () => {
+                availableDates = new Map();
+                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+                
+                allRecords.forEach(rec => {
+                    const date = rec.date;
+                    const monthYearKey = `${date.getFullYear()}-${date.getMonth()}`;
+                    if (!availableDates.has(monthYearKey)) {
+                        availableDates.set(monthYearKey, new Set());
+                    }
+                    availableDates.get(monthYearKey).add(toISODateString(date));
+                });
+
+                const sortedMonthYearKeys = Array.from(availableDates.keys()).sort((a, b) => {
+                    const [yearA, monthA] = a.split('-').map(Number);
+                    const [yearB, monthB] = b.split('-').map(Number);
+                    if (yearB !== yearA) return yearB - yearA;
+                    return monthB - monthA;
+                });
+
+                monthYearFilter.innerHTML = '';
+                sortedMonthYearKeys.forEach(key => {
+                    const [year, month] = key.split('-').map(Number);
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = `${khmerMonths[month]} ${year}`;
+                    monthYearFilter.appendChild(option);
+                });
+
+                if (monthYearFilter.options.length > 0) {
+                    monthYearFilter.value = sortedMonthYearKeys[0];
+                }
+                updateDateFilter();
+            };
+
+            const updateDateFilter = () => {
+                const selectedMonthYear = monthYearFilter.value;
+                const dates = availableDates.get(selectedMonthYear);
+                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+
+                dateFilter.innerHTML = '<option value="all">គ្រប់កាលបរិច្ឆេទ</option>';
+
+                if (dates) {
+                    const sortedDates = Array.from(dates).sort();
+                    sortedDates.forEach(dateStr => {
+                        const date = new Date(dateStr + 'T00:00:00');
+                        const option = document.createElement('option');
+                        option.value = dateStr;
+                        option.textContent = `ថ្ងៃទី ${date.getDate()} ${khmerMonths[date.getMonth()]} ${date.getFullYear()}`;
+                        dateFilter.appendChild(option);
+                    });
+                }
+            };
+            
+            const getDisplayValue = (cell, defaultValue = 'N/A') => {
+                if (!cell) return defaultValue;
+                const value = (cell.f !== null && cell.f !== undefined) ? cell.f : cell.v;
+                return (value === null || value === undefined) ? defaultValue : value.toString();
+            };
+
+            const parsePhotoData = (table) => {
+                const photos = new Map();
+                if (!table.rows) return photos;
+                table.rows.forEach(row => {
+                    if (row.c && row.c[4] && row.c[26]) {
+                        const employeeId = getDisplayValue(row.c[4]); // E
+                        const photoUrl = getDisplayValue(row.c[26]); // AA
+                        if (employeeId !== 'N/A' && photoUrl !== 'N/A' && photoUrl.startsWith('http')) {
+                            photos.set(employeeId, photoUrl);
+                        }
+                    }
+                });
+                return photos;
+            };
+
+            const parsePriorityData = (table) => {
+                if (!table.rows) return [];
+                return table.rows.map(row => getDisplayValue(row.c[0], null)).filter(name => name !== null);
+            };
+            
+            const parseSheetData = (table) => {
+                if (!table.rows) return [];
+                return table.rows.map(row => {
+                    if (!row.c || row.c.every(cell => !cell || cell.v === null)) return null;
+                    const id = getDisplayValue(row.c[6]); // G
+                    return { 
+                        id, 
+                        name: getDisplayValue(row.c[4]), // E
+                        gender: getDisplayValue(row.c[5]), // F
+                        department: getDisplayValue(row.c[3]), // D -> ផ្នែក
+                        class: getDisplayValue(row.c[2]), // C -> ថ្នាក់
+                        date: parseDate(getDisplayValue(row.c[7])), // H
+                        schedule: getDisplayValue(row.c[8]), // I -> កាលវិភាគ
+                        checkIn: getDisplayValue(row.c[9]), // J
+                        checkOut: getDisplayValue(row.c[10]), // K
+                        other: getDisplayValue(row.c[12], ''), // M
+                        photo: employeePhotos.get(id) || null 
+                    };
+                }).filter(record => record && record.date);
+            };
+            
+             const parseDate = (dateString) => {
+                 if (!dateString || typeof dateString !== 'string' || dateString === 'N/A') return null;
+                 const monthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
+                 let parts = dateString.split('-');
+                 if (parts.length === 3 && monthMap.hasOwnProperty(parts[1])) return new Date(parts[2], monthMap[parts[1]], parts[0]);
+                 parts = dateString.split('/');
+                 if (parts.length === 3) return new Date(parts[2], parts[1] - 1, parts[0]);
+                 return null;
+             };
+
+            const groupAndSortRecords = (records) => {
+                const grouped = new Map();
+                records.forEach(rec => {
+                    if (!grouped.has(rec.id)) grouped.set(rec.id, []);
+                    grouped.get(rec.id).push(rec);
+                });
+
+                const sortedEntries = Array.from(grouped.entries());
+
+                sortedEntries.sort(([, recordsA], [, recordsB]) => {
+                    const a = recordsA[0]; const b = recordsB[0];
+                    const aPriority = priorityNames.indexOf(a.name.trim());
+                    const bPriority = priorityNames.indexOf(b.name.trim());
+                    if (aPriority !== -1 && bPriority !== -1) return aPriority - bPriority;
+                    if (aPriority !== -1) return -1;
+                    if (bPriority !== -1) return 1;
+                    const isA_IT = a.department.toUpperCase().trim() === 'IT SUPPORT';
+                    const isB_IT = b.department.toUpperCase().trim() === 'IT SUPPORT';
+                    if (isA_IT && !isB_IT) return -1;
+                    if (!isA_IT && isB_IT) return 1;
+                    return a.name.localeCompare(b.name, 'km');
+                });
+                
+                return new Map(sortedEntries);
+            };
+
+            const filterAndRender = () => {
+                const selectedMonthYear = monthYearFilter.value;
+                const selectedDate = dateFilter.value;
+
+                if (!selectedMonthYear) {
+                    renderData(new Map());
+                    summaryEl.textContent = "គ្មានទិន្នន័យសម្រាប់បង្ហាញ";
+                    return;
+                }
+
+                let filteredRecords;
+
+                if (selectedDate === 'all') {
+                    const [year, month] = selectedMonthYear.split('-').map(Number);
+                    filteredRecords = allRecords.filter(record => {
+                        const recordDate = record.date;
+                        return recordDate && recordDate.getMonth() === month && recordDate.getFullYear() === year;
+                    });
+                     const [yearText, monthText] = selectedMonthYear.split('-').map(Number);
+                      updateSummary(filteredRecords.length, monthText, yearText);
+                } else {
+                    filteredRecords = allRecords.filter(record => {
+                        return record.date && toISODateString(record.date) === selectedDate;
+                    });
+                    const date = new Date(selectedDate + 'T00:00:00');
+                    const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+                    const summaryText = `កំពុងបង្ហាញ ${filteredRecords.length} កំណត់ត្រា សម្រាប់ថ្ងៃទី ${date.getDate()} ${khmerMonths[date.getMonth()]} ${date.getFullYear()}`;
+                    summaryEl.textContent = summaryText;
+                }
+
+                groupedRecords = groupAndSortRecords(filteredRecords);
+                renderData(groupedRecords);
+            };
+            
+            const renderData = (groupedData) => {
+                if (groupedData.size === 0) {
+                    tableBody.innerHTML = ''; cardsContainer.innerHTML = ''; showNoData(true); return;
+                }
+                showNoData(false);
+                tableBody.innerHTML = Array.from(groupedData.values()).map(createTableRowGroup).join('');
+                mobilePaginatedRecords = Array.from(groupedData.values());
+                totalPages = Math.ceil(mobilePaginatedRecords.length / itemsPerPage);
+                currentPage = 1;
+                displayMobilePage(true);
+            };
+
+            const createTableRowGroup = (records) => {
+                records.sort((a,b) => a.date - b.date); // Sort records by date for each employee
+
+                return records.map((record, index) => {
+                    const trClass = "hover:bg-gray-50 cursor-pointer";
+                    const dataId = `data-employee-id="${record.id}"`;
+
+                    if (index === 0) {
+                        const placeholder = `https://placehold.co/40x40/EFEFEF/333333?text=${encodeURIComponent(record.name.charAt(0))}`;
+                        const photoHTML = `<img src="${record.photo || placeholder}" onerror="this.src='${placeholder}'" class="h-8 w-8 rounded-full object-cover">`;
+                        const cellClasses = "px-4 py-3 whitespace-nowrap text-sm align-middle";
+                        return `
+                            <tr class="${trClass} border-t-2 border-gray-200" ${dataId}>
+                                <td class="${cellClasses} text-gray-700">${record.id}</td>
+                                <td class="${cellClasses} font-medium text-gray-900 flex items-center gap-3">${photoHTML}<span>${record.name}</span></td>
+                                <td class="${cellClasses} text-gray-700">${record.gender}</td>
+                                <td class="${cellClasses} text-gray-700">${record.department}</td>
+                                <td class="${cellClasses} text-gray-700">${record.date.toLocaleDateString('en-GB')}</td>
+                                <td class="${cellClasses} text-gray-700">${record.checkIn}</td>
+                                <td class="${cellClasses} text-gray-700">${record.checkOut}</td>
+                                <td class="${cellClasses} text-gray-700">${record.other}</td>
+                                <td class="${cellClasses} text-gray-700">${record.schedule}</td>
+                            </tr>`;
+                    } else {
+                        const cellClasses = "px-4 py-3 whitespace-nowrap text-sm align-middle";
+                        return `
+                            <tr class="${trClass}" ${dataId}>
+                                <td class="px-4 py-3"></td>
+                                <td class="px-4 py-3"></td>
+                                <td class="px-4 py-3"></td>
+                                <td class="px-4 py-3"></td>
+                                <td class="${cellClasses} text-gray-700">${record.date.toLocaleDateString('en-GB')}</td>
+                                <td class="${cellClasses} text-gray-700">${record.checkIn}</td>
+                                <td class="${cellClasses} text-gray-700">${record.checkOut}</td>
+                                <td class="${cellClasses} text-gray-700">${record.other}</td>
+                                <td class="${cellClasses} text-gray-700">${record.schedule}</td>
+                            </tr>`;
+                    }
+                }).join('');
+            };
+            
+            const createCard = (records) => {
+                const record = records[0]; // Use the first record for general info
+                const placeholder = `https://placehold.co/100x100/EFEFEF/333333?text=${encodeURIComponent(record.name.charAt(0))}`;
+                const photoHTML = `<img src="${record.photo || placeholder}" onerror="this.src='${placeholder}'" class="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm">`;
+                const attendanceCount = records.length;
+                return `<div class="bg-white rounded-2xl shadow-lg border border-gray-200/80 overflow-hidden transform hover:scale-[1.02] active:scale-[1.01] transition-transform duration-300 ease-in-out cursor-pointer" data-employee-id="${record.id}"><div class="p-4 bg-gray-50/70 flex justify-between items-center border-b border-gray-200/80"><div class="flex items-center gap-3">${photoHTML}<div><p class="font-bold text-lg text-blue-700">${record.name}</p><p class="text-xs text-gray-500 font-mono">ID: ${record.id}</p></div></div><span class="text-sm font-semibold px-3 py-1 rounded-full ${record.gender === 'ប្រុស' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}">${record.gender}</span></div><div class="p-4 text-center"><p class="text-gray-600">វត្តមានខែនេះ</p><p class="text-3xl font-bold text-blue-600">${attendanceCount} <span class="text-lg font-normal">ថ្ងៃ</span></p></div></div>`;
+            };
+
+            const displayMobilePage = (isInitial = false, direction = 'right') => {
+                if (totalPages > 0) {
+                    paginationControls.style.display = 'flex';
+                    const start = (currentPage - 1) * itemsPerPage;
+                    const pageItems = mobilePaginatedRecords.slice(start, start + itemsPerPage);
+                    cardsContainer.innerHTML = pageItems.map(createCard).join('');
+                    if (!isInitial) {
+                       cardsContainer.classList.remove('slide-in-right', 'slide-in-left');
+                       void cardsContainer.offsetWidth; // Trigger reflow
+                       cardsContainer.classList.add(direction === 'right' ? 'slide-in-right' : 'slide-in-left');
+                    }
+                } else {
+                    cardsContainer.innerHTML = '';
+                    paginationControls.style.display = 'none';
+                }
+                updatePaginationControls();
+            };
+
+            const updatePaginationControls = () => {
+                if (totalPages > 0) {
+                    pageIndicator.textContent = `ទំព័រ ${currentPage} / ${totalPages}`;
+                    prevPageBtn.disabled = currentPage === 1;
+                    nextPageBtn.disabled = currentPage >= totalPages;
+                }
+            };
+            const nextPage = () => { if (currentPage < totalPages) { currentPage++; displayMobilePage(false, 'right'); } };
+            const prevPage = () => { if (currentPage > 1) { currentPage--; displayMobilePage(false, 'left'); } };
+            const handleSwipe = () => {
+                const swipeThreshold = 50;
+                if (touchStartX - touchEndX > swipeThreshold) nextPage();
+                if (touchEndX - touchStartX > swipeThreshold) prevPage();
+            };
+            
+            const calculateDurationInMinutes = (checkInStr, checkOutStr) => {
+                try {
+                    const [inHours, inMinutes] = checkInStr.split(':').map(Number);
+                    const [outHours, outMinutes] = checkOutStr.split(':').map(Number);
+                    if ([inHours, inMinutes, outHours, outMinutes].some(isNaN)) return 0;
+                    return (outHours * 60 + outMinutes) - (inHours * 60 + inMinutes);
+                } catch (e) { return 0; }
+            };
+
+            const showEmployeeDetails = (employeeId) => {
+                const employeeMonthRecords = groupedRecords.get(employeeId);
+                if (!employeeMonthRecords || employeeMonthRecords.length === 0) return;
+
+                const employeeInfo = employeeMonthRecords[0];
+                const selectedMonthYear = monthYearFilter.value;
+                const [year, month] = selectedMonthYear.split('-').map(Number);
+                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+                
+                const placeholder = `https://placehold.co/80x80/EFEFEF/333333?text=${encodeURIComponent(employeeInfo.name.charAt(0))}`;
+                modalPhotoContainer.innerHTML = `<img src="${employeeInfo.photo || placeholder}" onerror="this.src='${placeholder}'" class="h-20 w-20 rounded-full object-cover border-4 border-white shadow-lg">`;
+                modalEmployeeName.textContent = employeeInfo.name;
+                modalEmployeeId.textContent = `ID: ${employeeInfo.id} | ផ្នែក: ${employeeInfo.department}`;
+                modalMonthYear.textContent = `${khmerMonths[month]} ${year}`;
+
+                const presentRecords = employeeMonthRecords.filter(isValidRecord);
+                if (presentRecords.length > 0) {
+                    presentRecords.sort((a, b) => a.date - b.date);
+                    modalAttendanceList.innerHTML = presentRecords.map(rec => {
+                        const day = rec.date.getDate().toString().padStart(2, '0');
+                        const statusHTML = `<div class="flex items-center text-sm"><span class="font-semibold text-green-600">${rec.checkIn}</span><span class="text-gray-400 mx-2">→</span><span class="font-semibold text-red-600">${rec.checkOut}</span></div>`;
+                        const otherHTML = rec.other ? `<div class="mt-1 text-xs text-gray-500 pl-4 border-l-2 border-gray-200">${rec.other}</div>` : '';
+                        return `<div class="bg-gray-50 p-3 rounded-lg border border-gray-200 transition-all hover:shadow-md hover:border-blue-300"><div class="flex items-center justify-between"><div class="font-bold text-gray-800">${day} ${khmerMonths[rec.date.getMonth()]}</div>${statusHTML}</div>${otherHTML}</div>`;
+                    }).join('');
+                    const totalMinutes = presentRecords.reduce((acc, rec) => acc + calculateDurationInMinutes(rec.checkIn, rec.checkOut), 0);
+                    const hours = Math.floor(totalMinutes / 60);
+                    const minutes = totalMinutes % 60;
+                    modalSummary.innerHTML = `<div class="grid grid-cols-2 gap-4 text-center"><div><p class="text-sm text-gray-500">វត្តមានសរុប</p><p class="text-2xl font-bold text-green-600">${presentRecords.length} <span class="text-base font-normal">ថ្ងៃ</span></p></div><div><p class="text-sm text-gray-500">ម៉ោងធ្វើការសរុប</p><p class="text-2xl font-bold text-blue-600">${hours} <span class="text-base font-normal">ម៉ោង</span> ${minutes} <span class="text-base font-normal">នាទី</span></p></div></div>`;
+                } else {
+                    modalAttendanceList.innerHTML = `<p class="text-center text-gray-500 p-4">គ្មានកំណត់ត្រាវត្តមានសម្រាប់ខែនេះទេ។</p>`;
+                    modalSummary.innerHTML = '';
+                }
+                detailsModal.classList.add('active');
+            };
+            
+            const hideEmployeeDetails = () => detailsModal.classList.remove('active');
+
+            const showExportOptions = () => {
+                const datesInView = new Set();
+                groupedRecords.forEach(records => {
+                    records.forEach(rec => datesInView.add(toISODateString(rec.date)));
+                });
+
+                if (datesInView.size === 0) {
+                    exportDateList.innerHTML = '<p class="text-center text-gray-500">គ្មានទិន្នន័យសម្រាប់ទាញយកទេ។</p>';
+                    exportModal.classList.add('active');
+                    return;
+                }
+                
+                const sortedDates = Array.from(datesInView).sort();
+                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+                
+                exportDateList.innerHTML = sortedDates.map(dateStr => {
+                    const date = new Date(dateStr + 'T00:00:00');
+                    const day = date.getDate();
+                    const month = khmerMonths[date.getMonth()];
+                    const year = date.getFullYear();
+                    return `<button data-date="${dateStr}" class="w-full text-left p-3 bg-gray-50 hover:bg-blue-100 rounded-lg transition-colors">ថ្ងៃទី ${day} ${month} ${year}</button>`;
+                }).join('');
+                
+                exportModal.classList.add('active');
+            };
+
+            exportDateList.addEventListener('click', (e) => {
+                const target = e.target.closest('button[data-date]');
+                if (target) {
+                    exportDataForDate(target.dataset.date);
+                }
+            });
+
+            const exportDataForDate = (dateStr) => {
+                const dateToExport = new Date(dateStr + 'T00:00:00');
+                const recordsForDate = allRecords.filter(rec => rec.date && toISODateString(rec.date) === dateStr);
+                
+                if (recordsForDate.length === 0) return;
+                
+                const toKhmerNumeral = (num) => {
+                    const khmerNums = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+                    return String(num).split('').map(digit => khmerNums[parseInt(digit, 10)]).join('');
+                };
+
+                const exportData = recordsForDate.map(rec => ({
+                    'ឈ្មោះ': rec.name,
+                    'ភេទ': rec.gender,
+                    'ថ្នាក់': rec.class,
+                    'ម៉ោងចូល': rec.checkIn,
+                    'ម៉ោងចេញ': rec.checkOut,
+                    'កាលវិភាគ': rec.schedule
+                }));
+
+                const worksheet = XLSX.utils.json_to_sheet(exportData);
+                const workbook = XLSX.utils.book_new();
+                
+                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+                const day = toKhmerNumeral(dateToExport.getDate());
+                const month = khmerMonths[dateToExport.getMonth()];
+                const year = toKhmerNumeral(dateToExport.getFullYear());
+                const sheetName = `${day} ${month} ${year}`;
+                const fileName = `DI_Report-${day}-${month}-${year}.xlsx`;
+
+                XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+                XLSX.writeFile(workbook, fileName);
+                hideExportOptions();
+            };
+            
+            const hideExportOptions = () => exportModal.classList.remove('active');
+
+            // --- UPDATED FUNCTION: Download Modal as PDF (Handles scrolling content and absolute positioning) ---
+            const downloadDetailsAsPdf = async () => {
+                const { jsPDF } = window.jspdf;
+                const modalContent = detailsModal.querySelector('.modal-content');
+                const scrollableContent = document.getElementById('modal-scroll-content');
+                const actionButtons = document.getElementById('modal-action-buttons');
+                const photoContainer = document.getElementById('modal-photo-container');
+                const modalHeader = modalContent.querySelector('.pt-12');
+
+                const employeeName = modalEmployeeName.textContent.trim();
+                const monthYear = modalMonthYear.textContent.trim().replace(/\s+/g, '-');
+
+                if (!modalContent || !scrollableContent || !photoContainer || !modalHeader) return;
+
+                // --- Store original styles to revert back later ---
+                const originalStyles = {
+                    modal: { maxHeight: modalContent.style.maxHeight },
+                    scroll: { overflowY: scrollableContent.style.overflowY },
+                    photo: { transform: photoContainer.style.transform, top: photoContainer.style.top },
+                    header: { paddingTop: modalHeader.style.paddingTop },
+                    buttons: { visibility: actionButtons.style.visibility }
+                };
+
+                try {
+                    // --- Prepare for capture by temporarily modifying styles ---
+                    actionButtons.style.visibility = 'hidden';
+                    
+                    // Move photo into the document flow to ensure it's captured
+                    photoContainer.style.top = '1rem'; // Move it down from the edge
+                    photoContainer.style.transform = 'translateX(-50%)'; // Remove vertical translate
+                    
+                    // Increase header padding to make space for the photo
+                    modalHeader.style.paddingTop = '6rem'; // h-20 (5rem) + 1rem gap
+
+                    // Expand modal and scrollable area to their full height
+                    modalContent.style.maxHeight = 'none';
+                    scrollableContent.style.overflowY = 'visible';
+
+                    // Give the browser a moment to apply style changes and reflow
+                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                    // --- Capture and Generate PDF ---
+                    const canvas = await html2canvas(modalContent, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'pt',
+                        format: 'a4'
+                    });
+
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+                    
+                    const margin = 40;
+                    const imgWidth = pdfWidth - margin;
+                    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+                    
+                    let heightLeft = imgHeight;
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', margin / 2, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft > 0) {
+                        position -= pageHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', margin / 2, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+                    
+                    pdf.save(`Report-${employeeName}-${monthYear}.pdf`);
+
+                } catch (err) {
+                    console.error('Error creating PDF:', err);
+                } finally {
+                    // --- IMPORTANT: Revert all styles back to original ---
+                    modalContent.style.maxHeight = originalStyles.modal.maxHeight;
+                    scrollableContent.style.overflowY = originalStyles.scroll.overflowY;
+                    photoContainer.style.transform = originalStyles.photo.transform;
+                    photoContainer.style.top = originalStyles.photo.top;
+                    modalHeader.style.paddingTop = originalStyles.header.paddingTop;
+                    actionButtons.style.visibility = originalStyles.buttons.visibility;
+                }
+            };
+
+
+            const updateSummary = (count, month, year) => {
+                const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+                const monthName = khmerMonths[month];
+                summaryEl.textContent = `កំពុងបង្ហាញ ${count} កំណត់ត្រា សម្រាប់ខែ ${monthName} ឆ្នាំ ${year}`;
+            };
+            const isMobile = () => window.innerWidth < 768;
+            const resetFilterTimer = () => {
+                if (!isMobile()) return;
+                clearTimeout(filterHideTimer);
+                filterHideTimer = setTimeout(() => filterBox.classList.add('hidden-mobile'), 10000);
+            };
+            const toggleFilterBox = () => {
+                if (!isMobile()) return;
+                filterBox.classList.toggle('hidden-mobile');
+                if (!filterBox.classList.contains('hidden-mobile')) resetFilterTimer();
+                else clearTimeout(filterHideTimer);
+            };
+            const showLoader = (show) => {
+                loaderContainer.style.display = show ? 'flex' : 'none';
+                if (show) { showNoData(false); tableBody.innerHTML = ''; cardsContainer.innerHTML = ''; }
+            };
+            const showNoData = (show) => { noDataContainer.style.display = show ? 'block' : 'none'; };
+            const toISODateString = (date) => `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+            initializeApp();
+        });
+    </script>
 </body>
 </html>
