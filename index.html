@@ -324,26 +324,6 @@
 
             const isValidRecord = (rec) => rec.checkIn && rec.checkIn !== 'N/A' && rec.checkIn !== '' && rec.checkOut && rec.checkOut !== 'N/A' && rec.checkOut !== '';
 
-            const filterIncompleteDates = (records) => {
-                const recordsByDate = new Map();
-                records.forEach(rec => {
-                    if (!rec.date) return;
-                    const dateStr = toISODateString(rec.date);
-                    if (!recordsByDate.has(dateStr)) {
-                        recordsByDate.set(dateStr, []);
-                    }
-                    recordsByDate.get(dateStr).push(rec);
-                });
-
-                const validDates = new Set();
-                for (const [dateStr, dateRecords] of recordsByDate.entries()) {
-                    if (dateRecords.every(isValidRecord)) {
-                        validDates.add(dateStr);
-                    }
-                }
-                return records.filter(rec => rec.date && validDates.has(toISODateString(rec.date)));
-            };
-            
             const fetchData = async () => {
                 showLoader(true);
                 try {
@@ -369,8 +349,7 @@
                     employeePhotos = parsePhotoData(photoData.table);
                     priorityNames = parsePriorityData(priorityData.table);
                     
-                    let parsedRecords = parseSheetData(attendanceData.table);
-                    allRecords = filterIncompleteDates(parsedRecords); // Apply the strict filter
+                    allRecords = parseSheetData(attendanceData.table);
                     
                     populateFilters();
 
@@ -485,6 +464,16 @@
             
              const parseDate = (dateString) => {
                  if (!dateString || typeof dateString !== 'string' || dateString === 'N/A') return null;
+
+                // Handle "Date(YYYY,M,D)" format from Google Sheets JSON
+                const dateMatch = dateString.match(/Date\((\d{4}),(\d{1,2}),(\d{1,2})\)/);
+                if (dateMatch) {
+                    const year = parseInt(dateMatch[1], 10);
+                    const month = parseInt(dateMatch[2], 10); // Month is 0-indexed in this format
+                    const day = parseInt(dateMatch[3], 10);
+                    return new Date(year, month, day);
+                }
+
                  const monthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
                  let parts = dateString.split('-');
                  if (parts.length === 3 && monthMap.hasOwnProperty(parts[1])) return new Date(parts[2], monthMap[parts[1]], parts[0]);
@@ -883,5 +872,7 @@
     </script>
 </body>
 </html>
+
+
 
 
